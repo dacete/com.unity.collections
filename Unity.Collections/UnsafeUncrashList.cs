@@ -723,6 +723,87 @@ namespace Unity.Collections.Unsafe
             }
         }
     }
+
+
+
+    /// <summary>
+    /// Provides extension methods for UnsafeList.
+    /// </summary>
+    [GenerateTestsForBurstCompatibility]
+    public unsafe static class NativeListExtensions
+    {
+        /// <summary>
+        /// Returns true if a particular value is present in this list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in this list.</typeparam>
+        /// <typeparam name="U">The value type.</typeparam>
+        /// <param name="list">The list to search.</param>
+        /// <param name="value">The value to locate.</param>
+        /// <returns>True if the value is present in this list.</returns>
+        [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int), typeof(int) })]
+        public static bool Contains<T, U>(this UncrashUnsafeList<T> list, U value)
+            where T : unmanaged, IEquatable<U>
+        {
+            return NativeArrayExtensions.IndexOf<T, U>(list.GetUnsafeReadOnlyPtr(), list.Length, value) != -1;
+        }
+
+        /// <summary>
+        /// Finds the index of the first occurrence of a particular value in this list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <typeparam name="U">The value type.</typeparam>
+        /// <param name="list">The list to search.</param>
+        /// <param name="value">The value to locate.</param>
+        /// <returns>The index of the first occurrence of the value in this list. Returns -1 if no occurrence is found.</returns>
+        [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int), typeof(int) })]
+        public static int IndexOf<T, U>(this UncrashUnsafeList<T> list, U value)
+            where T : unmanaged, IEquatable<U>
+        {
+            return NativeArrayExtensions.IndexOf<T, U>(list.GetUnsafeReadOnlyPtr(), list.Length, value);
+        }
+
+        /// <summary>
+        /// Returns true if this container and another have equal length and content.
+        /// </summary>
+        /// <typeparam name="T">The type of the source container's elements.</typeparam>
+        /// <param name="container">The container to compare for equality.</param>
+        /// <param name="other">The other container to compare for equality.</param>
+        /// <returns>True if the containers have equal length and content.</returns>
+        [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
+        public static bool ArraysEqual<T>(this NativeArray<T> container, in NativeList<T> other)
+            where T : unmanaged, IEquatable<T>
+        {
+            return container.ArraysEqual(other.AsArray());
+        }
+
+        /// <summary>
+        /// Returns true if this container and another have equal length and content.
+        /// </summary>
+        /// <typeparam name="T">The type of the source container's elements.</typeparam>
+        /// <param name="container">The container to compare for equality.</param>
+        /// <param name="other">The other container to compare for equality.</param>
+        /// <returns>True if the containers have equal length and content.</returns>
+        [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
+        public static bool ArraysEqual<T>(this UncrashUnsafeList<T> container, in NativeList<T> other)
+            where T : unmanaged, IEquatable<T>
+        {
+            return container.AsArray().ArraysEqual(other.AsArray());
+        }
+
+        /// <summary>
+        /// Returns true if this container and another have equal length and content.
+        /// </summary>
+        /// <typeparam name="T">The type of the source container's elements.</typeparam>
+        /// <param name="container">The container to compare for equality.</param>
+        /// <param name="other">The other container to compare for equality.</param>
+        /// <returns>True if the containers have equal length and content.</returns>
+        [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
+        public static bool ArraysEqual<T>(this UncrashUnsafeList<T> container, in UnsafeList<T> other)
+            where T : unmanaged, IEquatable<T>
+        {
+            return container.m_ListData->ArraysEqual(other);
+        }
+    }
 }
 
 namespace Unity.Collections.LowLevel.Unsafe
