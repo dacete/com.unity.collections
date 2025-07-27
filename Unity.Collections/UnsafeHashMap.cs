@@ -12,34 +12,34 @@ namespace Unity.Collections.LowLevel.Unsafe
 {
     [StructLayout(LayoutKind.Sequential)]
     [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
-    internal unsafe struct HashMapHelper<TKey>
+    public unsafe struct HashMapHelper<TKey>
         where TKey : unmanaged, IEquatable<TKey>
     {
         [NativeDisableUnsafePtrRestriction]
-        internal byte* Ptr;
+        public byte* Ptr;
 
         [NativeDisableUnsafePtrRestriction]
-        internal TKey* Keys;
+        public TKey* Keys;
 
         [NativeDisableUnsafePtrRestriction]
-        internal int* Next;
+        public int* Next;
 
         [NativeDisableUnsafePtrRestriction]
-        internal int* Buckets;
+        public int* Buckets;
 
-        internal int Count;
-        internal int Capacity;
-        internal int Log2MinGrowth;
-        internal int BucketCapacity;
-        internal int AllocatedIndex;
-        internal int FirstFreeIdx;
-        internal int SizeOfTValue;
-        internal AllocatorManager.AllocatorHandle Allocator;
+        public int Count;
+        public int Capacity;
+        public int Log2MinGrowth;
+        public int BucketCapacity;
+        public int AllocatedIndex;
+        public int FirstFreeIdx;
+        public int SizeOfTValue;
+        public AllocatorManager.AllocatorHandle Allocator;
 
-        internal const int kMinimumCapacity = 256;
+        public const int kMinimumCapacity = 256;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal int CalcCapacityCeilPow2(int capacity)
+        public int CalcCapacityCeilPow2(int capacity)
         {
             capacity = math.max(math.max(1, Count), capacity);
             var newCapacity = math.max(capacity, 1 << Log2MinGrowth);
@@ -48,24 +48,24 @@ namespace Unity.Collections.LowLevel.Unsafe
             return result;
         }
 
-        internal static int GetBucketSize(int capacity)
+        public static int GetBucketSize(int capacity)
         {
             return capacity * 2;
         }
 
-        internal readonly bool IsCreated
+        public readonly bool IsCreated
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Ptr != null;
         }
 
-        internal readonly bool IsEmpty
+        public readonly bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => !IsCreated || Count == 0;
         }
 
-        internal void Clear()
+        public void Clear()
         {
             UnsafeUtility.MemSet(Buckets, 0xff, BucketCapacity * sizeof(int));
             UnsafeUtility.MemSet(Next, 0xff, Capacity * sizeof(int));
@@ -75,7 +75,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             AllocatedIndex = 0;
         }
 
-        internal void Init(int capacity, int sizeOfValueT, int minGrowth, AllocatorManager.AllocatorHandle allocator)
+        public void Init(int capacity, int sizeOfValueT, int minGrowth, AllocatorManager.AllocatorHandle allocator)
         {
             Count = 0;
             Log2MinGrowth = (byte)(32 - math.lzcnt(math.max(1, minGrowth) - 1));
@@ -97,7 +97,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             Clear();
         }
 
-        internal void Dispose()
+        public void Dispose()
         {
             Memory.Unmanaged.Free(Ptr, Allocator);
             Ptr = null;
@@ -108,7 +108,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             BucketCapacity = 0;
         }
 
-        internal static HashMapHelper<TKey>* Alloc(int capacity, int sizeOfValueT, int minGrowth, AllocatorManager.AllocatorHandle allocator)
+        public static HashMapHelper<TKey>* Alloc(int capacity, int sizeOfValueT, int minGrowth, AllocatorManager.AllocatorHandle allocator)
         {
             var data = (HashMapHelper<TKey>*)Memory.Unmanaged.Allocate(sizeof(HashMapHelper<TKey>), UnsafeUtility.AlignOf<HashMapHelper<TKey>>(), allocator);
             data->Init(capacity, sizeOfValueT, minGrowth, allocator);
@@ -116,7 +116,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return data;
         }
 
-        internal static void Free(HashMapHelper<TKey>* data)
+        public static void Free(HashMapHelper<TKey>* data)
         {
             if (data == null)
             {
@@ -127,7 +127,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             Memory.Unmanaged.Free(data, data->Allocator);
         }
 
-        internal void Resize(int newCapacity)
+        public void Resize(int newCapacity)
         {
             newCapacity = math.max(newCapacity, Count);
             var newBucketCapacity = math.ceilpow2(GetBucketSize(newCapacity));
@@ -140,7 +140,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             ResizeExact(newCapacity, newBucketCapacity);
         }
 
-        internal void ResizeExact(int newCapacity, int newBucketCapacity)
+        public void ResizeExact(int newCapacity, int newBucketCapacity)
         {
             int keyOffset, nextOffset, bucketOffset;
             int totalSize = CalculateDataSize(newCapacity, newBucketCapacity, SizeOfTValue, out keyOffset, out nextOffset, out bucketOffset);
@@ -172,13 +172,13 @@ namespace Unity.Collections.LowLevel.Unsafe
             Memory.Unmanaged.Free(oldPtr, Allocator);
         }
 
-        internal void TrimExcess()
+        public void TrimExcess()
         {
             var capacity = CalcCapacityCeilPow2(Count);
             ResizeExact(capacity, GetBucketSize(capacity));
         }
 
-        internal static int CalculateDataSize(int capacity, int bucketCapacity, int sizeOfTValue, out int outKeyOffset, out int outNextOffset, out int outBucketOffset)
+        public static int CalculateDataSize(int capacity, int bucketCapacity, int sizeOfTValue, out int outKeyOffset, out int outNextOffset, out int outBucketOffset)
         {
             var sizeOfTKey = sizeof(TKey);
             var sizeOfInt = sizeof(int);
@@ -196,7 +196,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return totalSize;
         }
 
-        internal readonly int GetCount()
+        public readonly int GetCount()
         {
             if (AllocatedIndex <= 0)
             {
@@ -219,7 +219,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return (int)((uint)key.GetHashCode() & (BucketCapacity - 1));
         }
 
-        internal int TryAdd(in TKey key)
+        public int TryAdd(in TKey key)
         {
             if (-1 == Find(key))
             {
@@ -260,7 +260,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return -1;
         }
 
-        internal int Find(TKey key)
+        public int Find(TKey key)
         {
             if (AllocatedIndex > 0)
             {
@@ -288,7 +288,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
 
         [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
-        internal bool TryGetValue<TValue>(TKey key, out TValue item)
+        public bool TryGetValue<TValue>(TKey key, out TValue item)
             where TValue : unmanaged
         {
             var idx = Find(key);
@@ -303,7 +303,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return false;
         }
 
-        internal int TryRemove(TKey key)
+        public int TryRemove(TKey key)
         {
             if (Capacity != 0)
             {
@@ -353,7 +353,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return -1;
         }
 
-        internal bool MoveNextSearch(ref int bucketIndex, ref int nextIndex, out int index)
+        public bool MoveNextSearch(ref int bucketIndex, ref int nextIndex, out int index)
         {
             for (int i = bucketIndex, num = BucketCapacity; i < num; ++i)
             {
@@ -376,7 +376,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool MoveNext(ref int bucketIndex, ref int nextIndex, out int index)
+        public bool MoveNext(ref int bucketIndex, ref int nextIndex, out int index)
         {
             if (nextIndex != -1)
             {
@@ -388,7 +388,7 @@ namespace Unity.Collections.LowLevel.Unsafe
             return MoveNextSearch(ref bucketIndex, ref nextIndex, out index);
         }
 
-        internal NativeArray<TKey> GetKeyArray(AllocatorManager.AllocatorHandle allocator)
+        public NativeArray<TKey> GetKeyArray(AllocatorManager.AllocatorHandle allocator)
         {
             var result = CollectionHelper.CreateNativeArray<TKey>(Count, allocator, NativeArrayOptions.UninitializedMemory);
 
@@ -410,7 +410,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
 
         [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
-        internal NativeArray<TValue> GetValueArray<TValue>(AllocatorManager.AllocatorHandle allocator)
+        public NativeArray<TValue> GetValueArray<TValue>(AllocatorManager.AllocatorHandle allocator)
             where TValue : unmanaged
         {
             var result = CollectionHelper.CreateNativeArray<TValue>(Count, allocator, NativeArrayOptions.UninitializedMemory);
@@ -433,7 +433,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
 
         [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(int) })]
-        internal NativeKeyValueArrays<TKey, TValue> GetKeyValueArrays<TValue>(AllocatorManager.AllocatorHandle allocator)
+        public NativeKeyValueArrays<TKey, TValue> GetKeyValueArrays<TValue>(AllocatorManager.AllocatorHandle allocator)
             where TValue : unmanaged
         {
             var result = new NativeKeyValueArrays<TKey, TValue>(Count, allocator, NativeArrayOptions.UninitializedMemory);
@@ -457,15 +457,15 @@ namespace Unity.Collections.LowLevel.Unsafe
             return result;
         }
 
-        internal unsafe struct Enumerator
+        public unsafe struct Enumerator
         {
             [NativeDisableUnsafePtrRestriction]
-            internal HashMapHelper<TKey>* m_Data;
-            internal int m_Index;
-            internal int m_BucketIndex;
-            internal int m_NextIndex;
+            public HashMapHelper<TKey>* m_Data;
+            public int m_Index;
+            public int m_BucketIndex;
+            public int m_NextIndex;
 
-            internal unsafe Enumerator(HashMapHelper<TKey>* data)
+            public unsafe Enumerator(HashMapHelper<TKey>* data)
             {
                 m_Data = data;
                 m_Index = -1;
@@ -474,12 +474,12 @@ namespace Unity.Collections.LowLevel.Unsafe
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal bool MoveNext()
+            public bool MoveNext()
             {
                 return m_Data->MoveNext(ref m_BucketIndex, ref m_NextIndex, out m_Index);
             }
 
-            internal void Reset()
+            public void Reset()
             {
                 m_Index = -1;
                 m_BucketIndex = 0;
@@ -487,14 +487,14 @@ namespace Unity.Collections.LowLevel.Unsafe
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal KVPair<TKey, TValue> GetCurrent<TValue>()
+            public KVPair<TKey, TValue> GetCurrent<TValue>()
                 where TValue : unmanaged
             {
                 return new KVPair<TKey, TValue> { m_Data = m_Data, m_Index = m_Index };
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal TKey GetCurrentKey()
+            public TKey GetCurrentKey()
             {
                 if (m_Index != -1)
                 {
@@ -511,7 +511,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         {
             if ((uint)idx >= (uint)Capacity)
             {
-                throw new InvalidOperationException($"Internal HashMap error. idx {idx}");
+                throw new InvalidOperationException($"public HashMap error. idx {idx}");
             }
         }
     }
@@ -531,7 +531,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         where TValue : unmanaged
     {
         [NativeDisableUnsafePtrRestriction]
-        internal HashMapHelper<TKey> m_Data;
+        public HashMapHelper<TKey> m_Data;
 
         /// <summary>
         /// Initializes and returns an instance of UnsafeHashMap.
@@ -796,7 +796,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         /// </remarks>
         public struct Enumerator : IEnumerator<KVPair<TKey, TValue>>
         {
-            internal HashMapHelper<TKey>.Enumerator m_Enumerator;
+            public HashMapHelper<TKey>.Enumerator m_Enumerator;
 
             /// <summary>
             /// Does nothing.
@@ -849,9 +849,9 @@ namespace Unity.Collections.LowLevel.Unsafe
             : IEnumerable<KVPair<TKey, TValue>>
         {
             [NativeDisableUnsafePtrRestriction]
-            internal HashMapHelper<TKey> m_Data;
+            public HashMapHelper<TKey> m_Data;
 
-            internal ReadOnly(ref HashMapHelper<TKey> data)
+            public ReadOnly(ref HashMapHelper<TKey> data)
             {
                 m_Data = data;
             }
@@ -999,7 +999,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
     }
 
-    internal sealed class UnsafeHashMapDebuggerTypeProxy<TKey, TValue>
+    public sealed class UnsafeHashMapDebuggerTypeProxy<TKey, TValue>
         where TKey : unmanaged, IEquatable<TKey>
         where TValue : unmanaged
     {

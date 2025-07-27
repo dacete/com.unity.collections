@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Unity.Collections
 {
-    internal struct Pair<Key, Value>
+    public struct Pair<Key, Value>
     {
         public Key key;
         public Value value;
@@ -20,7 +20,7 @@ namespace Unity.Collections
     }
 
     // Tiny does not contains an IList definition (or even ICollection)
-    internal struct ListPair<Key, Value> where Value : IList
+    public struct ListPair<Key, Value> where Value : IList
     {
         public Key key;
         public Value value;

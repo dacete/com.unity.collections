@@ -12,17 +12,17 @@ namespace Unity.Collections
 {
     [NativeContainer]
     [GenerateTestsForBurstCompatibility]
-    internal unsafe struct NativeHashMapDispose
+    public unsafe struct NativeHashMapDispose
     {
         [NativeDisableUnsafePtrRestriction]
-        internal UnsafeHashMap<int, int>* m_HashMapData;
-        internal AllocatorManager.AllocatorHandle m_Allocator;
+        public UnsafeHashMap<int, int>* m_HashMapData;
+        public AllocatorManager.AllocatorHandle m_Allocator;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        internal AtomicSafetyHandle m_Safety;
+        public AtomicSafetyHandle m_Safety;
 #endif
 
-        internal void Dispose()
+        public void Dispose()
         {
             var hashMapData = (HashMapHelper<int>*)m_HashMapData;
             HashMapHelper<int>.Free(hashMapData);
@@ -30,9 +30,9 @@ namespace Unity.Collections
     }
 
     [BurstCompile]
-    internal unsafe struct NativeHashMapDisposeJob : IJob
+    public unsafe struct NativeHashMapDisposeJob : IJob
     {
-        internal NativeHashMapDispose Data;
+        public NativeHashMapDispose Data;
 
         public void Execute()
         {
@@ -52,9 +52,9 @@ namespace Unity.Collections
         where TKey : unmanaged, IEquatable<TKey>
         where TValue : unmanaged
     {
-        internal HashMapHelper<TKey>* m_Data;
-        internal int m_Index;
-        internal int m_Next;
+        public HashMapHelper<TKey>* m_Data;
+        public int m_Index;
+        public int m_Next;
 
         /// <summary>
         ///  An invalid KeyValue.
@@ -135,10 +135,10 @@ namespace Unity.Collections
         where TValue : unmanaged
     {
         [NativeDisableUnsafePtrRestriction]
-        internal HashMapHelper<TKey>* m_Data;
+        public HashMapHelper<TKey>* m_Data;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        internal AtomicSafetyHandle m_Safety;
+        public AtomicSafetyHandle m_Safety;
         static readonly SharedStatic<int> s_staticSafetyId = SharedStatic<int>.GetOrCreate<NativeHashMap<TKey, TValue>>();
 #endif
 
@@ -493,9 +493,9 @@ namespace Unity.Collections
         public struct Enumerator : IEnumerator<KVPair<TKey, TValue>>
         {
             [NativeDisableUnsafePtrRestriction]
-            internal HashMapHelper<TKey>.Enumerator m_Enumerator;
+            public HashMapHelper<TKey>.Enumerator m_Enumerator;
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            internal AtomicSafetyHandle m_Safety;
+            public AtomicSafetyHandle m_Safety;
 #endif
 
             /// <summary>
@@ -563,14 +563,14 @@ namespace Unity.Collections
             : IEnumerable<KVPair<TKey, TValue>>
         {
             [NativeDisableUnsafePtrRestriction]
-            internal HashMapHelper<TKey>* m_Data;
+            public HashMapHelper<TKey>* m_Data;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle m_Safety;
-            internal static readonly SharedStatic<int> s_staticSafetyId = SharedStatic<int>.GetOrCreate<ReadOnly>();
+            public static readonly SharedStatic<int> s_staticSafetyId = SharedStatic<int>.GetOrCreate<ReadOnly>();
 #endif
 
-            internal ReadOnly(ref NativeHashMap<TKey, TValue> data)
+            public ReadOnly(ref NativeHashMap<TKey, TValue> data)
             {
                 m_Data = data.m_Data;
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -803,7 +803,7 @@ namespace Unity.Collections
         }
     }
 
-    internal unsafe sealed class NativeHashMapDebuggerTypeProxy<TKey, TValue>
+    public unsafe sealed class NativeHashMapDebuggerTypeProxy<TKey, TValue>
         where TKey : unmanaged, IEquatable<TKey>
         where TValue : unmanaged
     {
