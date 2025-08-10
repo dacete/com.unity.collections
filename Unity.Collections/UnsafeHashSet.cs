@@ -20,7 +20,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         , IEnumerable<T> // Used by collection initializers.
         where T : unmanaged, IEquatable<T>
     {
-        internal HashMapHelper<T> m_Data;
+        public HashMapHelper<T> m_Data;
 
         /// <summary>
         /// Initializes and returns an instance of NativeParallelHashSet.
@@ -201,7 +201,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         /// </remarks>
         public struct Enumerator : IEnumerator<T>
         {
-            internal HashMapHelper<T>.Enumerator m_Enumerator;
+            public HashMapHelper<T>.Enumerator m_Enumerator;
 
             /// <summary>
             /// Does nothing.
@@ -253,9 +253,9 @@ namespace Unity.Collections.LowLevel.Unsafe
         public struct ReadOnly
             : IEnumerable<T>
         {
-            internal HashMapHelper<T> m_Data;
+            public HashMapHelper<T> m_Data;
 
-            internal ReadOnly(ref HashMapHelper<T> data)
+            public ReadOnly(ref HashMapHelper<T> data)
             {
                 m_Data = data;
             }
@@ -354,7 +354,7 @@ namespace Unity.Collections.LowLevel.Unsafe
         }
     }
 
-    sealed internal class UnsafeHashSetDebuggerTypeProxy<T>
+    sealed public class UnsafeHashSetDebuggerTypeProxy<T>
         where T : unmanaged, IEquatable<T>
     {
         HashMapHelper<T> Data;
